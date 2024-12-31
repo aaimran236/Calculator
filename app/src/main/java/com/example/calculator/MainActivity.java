@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
     private static String workings="";
     String formula = "";
     String tempFormula = "";
+    static boolean leftBracket = true;
 
 
     @Override
@@ -61,7 +62,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if(result != null){
-            resultsTV.setText("="+String.valueOf(result.doubleValue()));
+            String formatterResult=String.format("%.8g",result).replace("e+0","e+").replace("e-0","e-");
+
+            resultsTV.setText("="+formatterResult);
         }
 
     }
@@ -168,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
         leftBracket = true;
     }
 
-    boolean leftBracket = true;
+
 
     public void bracketsOnClick(View view)
     {
@@ -186,8 +189,15 @@ public class MainActivity extends AppCompatActivity {
 
     public void backSpaceOnClick(View view){
         if (workings!=null && !workings.isEmpty()){
+            if (workings.length()>0){
+                if (workings.charAt(workings.length()-1)=='(')leftBracket=true;
+                if (workings.charAt(workings.length()-1)==')')leftBracket=false;
+            }
+
             workings=workings.substring(0,workings.length()-1);
             workingsTV.setText(workings);
+
+
         }
     }
 
