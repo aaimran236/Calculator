@@ -19,7 +19,7 @@ import javax.script.ScriptException;
 
 public class MainActivity extends AppCompatActivity {
     private TextView workingsTV,resultsTV;
-    private String workings="";
+    private static String workings="";
     String formula = "";
     String tempFormula = "";
 
@@ -39,8 +39,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void setWorkings(String givenValue)
     {
-        workings = workings + givenValue;
-        workingsTV.setText(workings);
+            workings = workings + givenValue;
+            workingsTV.setText(workings);
+
     }
 
 
@@ -56,10 +57,12 @@ public class MainActivity extends AppCompatActivity {
         } catch (ScriptException e)
         {
             Toast.makeText(this, "Invalid Input", Toast.LENGTH_SHORT).show();
+            resultsTV.setText("="+"Error");
         }
 
-        if(result != null)
-            resultsTV.setText(String.valueOf(result.doubleValue()));
+        if(result != null){
+            resultsTV.setText("="+String.valueOf(result.doubleValue()));
+        }
 
     }
 
@@ -81,30 +84,71 @@ public class MainActivity extends AppCompatActivity {
         formula = tempFormula;
     }
 
-    private void changeFormula(Integer index)
-    {
+    private void changeFormula(Integer index) {
         String numberLeft = "";
         String numberRight = "";
 
-        for(int i = index + 1; i< workings.length(); i++)
-        {
-            if(isNumeric(workings.charAt(i)))
-                numberRight = numberRight + workings.charAt(i);
-            else
-                break;
+        // Handle parentheses or numeric extraction for numberRight
+        if (workings.charAt(index + 1) == '(') {
+            int closingParenthesisIndex = findClosingParenthesis(index + 1);
+            if (closingParenthesisIndex != -1) {
+                numberRight = workings.substring(index + 1, closingParenthesisIndex + 1);
+            } else {
+                Toast.makeText(this, "Invalid Input: Missing closing parenthesis", Toast.LENGTH_SHORT).show();
+                return; // Exit early on invalid input
+            }
+        } else {
+            for (int i = index + 1; i < workings.length(); i++) {
+                if (isNumeric(workings.charAt(i)))
+                    numberRight += workings.charAt(i);
+                else
+                    break;
+            }
         }
 
-        for(int i = index - 1; i >= 0; i--)
-        {
-            if(isNumeric(workings.charAt(i)))
-                numberLeft = numberLeft + workings.charAt(i);
-            else
-                break;
+        // Handle parentheses or numeric extraction for numberLeft
+        if (workings.charAt(index - 1) == ')') {
+            int openingParenthesisIndex = findOpeningParenthesis(index - 1);
+            if (openingParenthesisIndex != -1) {
+                numberLeft = workings.substring(openingParenthesisIndex, index);
+            } else {
+                Toast.makeText(this, "Invalid Input: Missing opening parenthesis", Toast.LENGTH_SHORT).show();
+                return; // Exit early on invalid input
+            }
+        } else {
+            for (int i = index - 1; i >= 0; i--) {
+                if (isNumeric(workings.charAt(i)))
+                    numberLeft = workings.charAt(i) + numberLeft;
+                else
+                    break;
+            }
         }
 
+        // Replace the "^" operation with Math.pow
         String original = numberLeft + "^" + numberRight;
-        String changed = "Math.pow("+numberLeft+","+numberRight+")";
-        tempFormula = tempFormula.replace(original,changed);
+        String changed = "Math.pow(" + numberLeft + "," + numberRight + ")";
+        tempFormula = tempFormula.replace(original, changed);
+    }
+
+    private int findClosingParenthesis(int openIndex) {
+        int count = 0;
+        for (int i = openIndex; i < workings.length(); i++) {
+            if (workings.charAt(i) == '(') count++;
+            if (workings.charAt(i) == ')') count--;
+            if (count == 0) return i;
+        }
+        return -1; // No matching closing parenthesis found
+    }
+
+
+    private int findOpeningParenthesis(int closeIndex) {
+        int count = 0;
+        for (int i = closeIndex; i >= 0; i--) {
+            if (workings.charAt(i) == ')') count++;
+            if (workings.charAt(i) == '(') count--;
+            if (count == 0) return i;
+        }
+        return -1; // No matching opening parenthesis found
     }
 
     private boolean isNumeric(char c)
@@ -120,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
     {
         workingsTV.setText("");
         workings = "";
-        resultsTV.setText("");
+        resultsTV.setText("0");
         leftBracket = true;
     }
 
@@ -140,10 +184,18 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void backSpaceOnClick(View view){
+        if (workings!=null && !workings.isEmpty()){
+            workings=workings.substring(0,workings.length()-1);
+            workingsTV.setText(workings);
+        }
+    }
+
     public void powerOfOnClick(View view)
     {
         setWorkings("^");
     }
+
 
     public void divisionOnClick(View view)
     {
@@ -219,5 +271,6 @@ public class MainActivity extends AppCompatActivity {
     {
         setWorkings("0");
     }
+
 
 }
