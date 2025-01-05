@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- State when button is pressed -->
+    <item android:state_pressed="true">
+        <shape android:shape="rectangle">
+            <corners android:radius="4dp" /> <!-- Slightly rounded corners -->
+            <solid android:color="@color/white" /> <!-- Background color when pressed -->
+        </shape>
+    </item>
+
+</selector>

@@ -40,18 +40,27 @@ public class MainActivity extends AppCompatActivity {
 
     private void setWorkings(String givenValue)
     {
+        if (workings.length()<63){
             workings = workings + givenValue;
             workingsTV.setText(workings);
+        }
 
     }
 
 
     public void equalOnClick(View view)
     {
+        if (workings.length()>63){
+            Toast.makeText(this, "Input too long!"+workings.length(), Toast.LENGTH_SHORT).show();
+            resultsTV.setText("="+"Error");
+            return;
+        }
+
         Double result = null;
         ScriptEngine engine = new ScriptEngineManager().getEngineByName("rhino");
         checkForPowerOf();
 
+        if (formula.isEmpty())return;
         try {
             result = (double)engine.eval(formula);
 
