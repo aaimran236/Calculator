@@ -15,13 +15,14 @@
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_weight="1"
-            android:padding="15dp"
             android:textStyle="bold"
             android:background="@null"
             android:text="Calculator"
-            android:textSize="30sp" />
+            android:textSize="30sp"
+            android:paddingStart="15dp"
+            android:paddingTop="15dp"/>
 
         <TextView
             android:id="@+id/workingTextView"
@@ -33,6 +34,7 @@
             android:paddingRight="10dp"
             android:paddingLeft="10dp"
             android:text="0"
+            android:lines="4"
             android:textSize="30sp" />
 
         <TextView
@@ -79,6 +81,7 @@
                 android:scaleType="centerInside"
                 android:layout_margin="7dp"
                 android:onClick="backSpaceOnClick"
+                android:contentDescription="null"
                 android:src="@drawable/baseline_backspace_24" />
             <Button
                 android:layout_width="0dp"
@@ -86,8 +89,19 @@
                 android:layout_weight="1"
                 android:background="@drawable/button_pressed"
                 android:layout_margin="7dp"
-                android:onClick="bracketsOnClick"
-                android:text="()"
+                android:onClick="leftBracketsOnClick"
+                android:text="("
+                android:textColor="@color/orange"
+                android:textSize="30sp" />
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/button_pressed"
+                android:layout_margin="7dp"
+                android:onClick="rightBracketsOnClick"
+                android:text=")"
                 android:textColor="@color/orange"
                 android:textSize="30sp" />
 
@@ -117,7 +131,7 @@
                 android:layout_margin="7dp"
                 android:onClick="sevenOnClick"
                 android:text="7"
-                android:textSize="25sp"
+                android:textSize="22sp"
                 />
 
             <Button
@@ -128,7 +142,7 @@
                 android:layout_margin="7dp"
                 android:onClick="eightOnClick"
                 android:text="8"
-                android:textSize="25sp" />
+                android:textSize="22sp" />
 
             <Button
                 android:layout_width="0dp"
@@ -138,7 +152,7 @@
                 android:layout_margin="7dp"
                 android:onClick="nineOnClick"
                 android:text="9"
-                android:textSize="25sp" />
+                android:textSize="22sp" />
 
             <Button
                 android:layout_width="0dp"
@@ -165,7 +179,7 @@
                 android:layout_margin="7dp"
                 android:onClick="fourOnClick"
                 android:text="4"
-                android:textSize="25sp" />
+                android:textSize="22sp" />
 
             <Button
                 android:layout_width="0dp"
@@ -175,7 +189,7 @@
                 android:layout_margin="7dp"
                 android:onClick="fiveOnClick"
                 android:text="5"
-                android:textSize="25sp" />
+                android:textSize="22sp" />
 
             <Button
                 android:layout_width="0dp"
@@ -185,7 +199,7 @@
                 android:layout_margin="7dp"
                 android:onClick="sixOnClick"
                 android:text="6"
-                android:textSize="25sp" />
+                android:textSize="22sp" />
 
             <Button
                 android:layout_width="0dp"
@@ -212,7 +226,7 @@
                 android:layout_margin="7dp"
                 android:onClick="oneOnClick"
                 android:text="1"
-                android:textSize="25sp" />
+                android:textSize="22sp" />
 
             <Button
                 android:layout_width="0dp"
@@ -222,7 +236,7 @@
                 android:layout_margin="7dp"
                 android:onClick="twoOnClick"
                 android:text="2"
-                android:textSize="25sp" />
+                android:textSize="22sp" />
 
             <Button
                 android:layout_width="0dp"
@@ -232,7 +246,7 @@
                 android:layout_margin="7dp"
                 android:onClick="threeOnClick"
                 android:text="3"
-                android:textSize="25sp" />
+                android:textSize="22sp" />
 
             <Button
                 android:layout_width="0dp"
@@ -269,7 +283,7 @@
                 android:layout_margin="7dp"
                 android:onClick="zeroOnClick"
                 android:text="0"
-                android:textSize="25sp" />
+                android:textSize="22sp" />
 
             <Button
                 android:layout_width="0dp"
@@ -290,6 +304,7 @@
                 android:background="@null"
                 android:layout_margin="7dp"
                 android:src="@drawable/baseline_pause_circle_24"
+                android:contentDescription="null"
                 android:rotation="90"
                  />
 

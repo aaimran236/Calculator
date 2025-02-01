@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
     private static String workings="";
     String formula = "";
     String tempFormula = "";
-    static boolean leftBracket = true;
+
 
 
     @Override
@@ -100,8 +100,8 @@ public class MainActivity extends AppCompatActivity {
         String numberLeft = "";
         String numberRight = "";
 
-        // Handle parentheses or numeric extraction for numberRight
-        if (workings.charAt(index + 1) == '(') {
+        // Ensure index + 1 is within bounds
+        if (index + 1 < workings.length() && workings.charAt(index + 1) == '(') {
             int closingParenthesisIndex = findClosingParenthesis(index + 1);
             if (closingParenthesisIndex != -1) {
                 numberRight = workings.substring(index + 1, closingParenthesisIndex + 1);
@@ -118,8 +118,8 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        // Handle parentheses or numeric extraction for numberLeft
-        if (workings.charAt(index - 1) == ')') {
+        // Ensure index - 1 is within bounds
+        if (index - 1 >= 0 && workings.charAt(index - 1) == ')') {
             int openingParenthesisIndex = findOpeningParenthesis(index - 1);
             if (openingParenthesisIndex != -1) {
                 numberLeft = workings.substring(openingParenthesisIndex, index);
@@ -141,6 +141,7 @@ public class MainActivity extends AppCompatActivity {
         String changed = "Math.pow(" + numberLeft + "," + numberRight + ")";
         tempFormula = tempFormula.replace(original, changed);
     }
+
 
     private int findClosingParenthesis(int openIndex) {
         int count = 0;
@@ -177,35 +178,22 @@ public class MainActivity extends AppCompatActivity {
         workingsTV.setText("");
         workings = "";
         resultsTV.setText("0");
-        leftBracket = true;
     }
 
 
-
-    public void bracketsOnClick(View view)
+    public void leftBracketsOnClick(View view)
     {
-        if(leftBracket)
-        {
-            setWorkings("(");
-            leftBracket = false;
-        }
-        else
-        {
-            setWorkings(")");
-            leftBracket = true;
-        }
+        setWorkings("(");
     }
+    public void rightBracketsOnClick(View view){
+        setWorkings(")");
+    }
+
 
     public void backSpaceOnClick(View view){
         if (workings!=null && !workings.isEmpty()){
-            if (workings.length()>0){
-                if (workings.charAt(workings.length()-1)=='(')leftBracket=true;
-                if (workings.charAt(workings.length()-1)==')')leftBracket=false;
-            }
-
             workings=workings.substring(0,workings.length()-1);
             workingsTV.setText(workings);
-
 
         }
     }
