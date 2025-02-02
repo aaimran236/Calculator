@@ -1,19 +1,13 @@
 package com.example.calculator;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import java.io.Reader;
 import java.util.ArrayList;
-
-import javax.script.Bindings;
-import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
-import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
@@ -22,7 +16,9 @@ public class MainActivity extends AppCompatActivity {
     private static String workings="";
     String formula = "";
     String tempFormula = "";
-
+    static Double result = null;
+    private static String nWorkings;
+    private Button logButton;
 
 
     @Override
@@ -30,6 +26,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initTextViews();
+
+        logButton=findViewById(R.id.logbutton);
+        logButton.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                lnOnClick();
+                return true;
+            }
+        });
     }
 
     private void initTextViews()
@@ -40,23 +45,22 @@ public class MainActivity extends AppCompatActivity {
 
     private void setWorkings(String givenValue)
     {
-        if (workings.length()<63){
-            workings = workings + givenValue;
-            workingsTV.setText(workings);
+        if (workings.length()>83){
+            return;
         }
 
+        workings = workings + givenValue;
+        nWorkings = workings.replace("Math.PI", "π")
+                .replace("Math.log(", "ln(")
+                .replace("Math.log10(", "log(")
+                .replace("Math.sqrt(", "√(");
+        workingsTV.setText(nWorkings);
     }
 
 
     public void equalOnClick(View view)
     {
-        if (workings.length()>63){
-            Toast.makeText(this, "Input too long!"+workings.length(), Toast.LENGTH_SHORT).show();
-            resultsTV.setText("="+"Error");
-            return;
-        }
 
-        Double result = null;
         ScriptEngine engine = new ScriptEngineManager().getEngineByName("rhino");
         checkForPowerOf();
 
@@ -72,7 +76,6 @@ public class MainActivity extends AppCompatActivity {
 
         if(result != null){
             String formatterResult=String.format("%.8g",result).replace("e+0","e+").replace("e-0","e-");
-
             resultsTV.setText("="+formatterResult);
         }
 
@@ -106,8 +109,8 @@ public class MainActivity extends AppCompatActivity {
             if (closingParenthesisIndex != -1) {
                 numberRight = workings.substring(index + 1, closingParenthesisIndex + 1);
             } else {
-                Toast.makeText(this, "Invalid Input: Missing closing parenthesis", Toast.LENGTH_SHORT).show();
-                return; // Exit early on invalid input
+                // If closing parenthesis is missing, add it automatically
+                numberRight = workings.substring(index + 1) + ")"; // Add closing parenthesis at the end
             }
         } else {
             for (int i = index + 1; i < workings.length(); i++) {
@@ -124,8 +127,8 @@ public class MainActivity extends AppCompatActivity {
             if (openingParenthesisIndex != -1) {
                 numberLeft = workings.substring(openingParenthesisIndex, index);
             } else {
-                Toast.makeText(this, "Invalid Input: Missing opening parenthesis", Toast.LENGTH_SHORT).show();
-                return; // Exit early on invalid input
+                // If opening parenthesis is missing, add it automatically
+                numberLeft = "(" + workings.substring(0, index) + ")"; // Add opening parenthesis at the start
             }
         } else {
             for (int i = index - 1; i >= 0; i--) {
@@ -141,6 +144,7 @@ public class MainActivity extends AppCompatActivity {
         String changed = "Math.pow(" + numberLeft + "," + numberRight + ")";
         tempFormula = tempFormula.replace(original, changed);
     }
+
 
 
     private int findClosingParenthesis(int openIndex) {
@@ -177,6 +181,7 @@ public class MainActivity extends AppCompatActivity {
     {
         workingsTV.setText("");
         workings = "";
+        result=null;
         resultsTV.setText("0");
     }
 
@@ -192,9 +197,32 @@ public class MainActivity extends AppCompatActivity {
 
     public void backSpaceOnClick(View view){
         if (workings!=null && !workings.isEmpty()){
-            workings=workings.substring(0,workings.length()-1);
-            workingsTV.setText(workings);
 
+            ///specialFunctions will be remove at once on backspace clicked
+            String[] specialFunctions = {"Math.log10(", "Math.sqrt(", "Math.log(", "Math.PI"};
+
+            for (String func : specialFunctions) {
+                if (workings.endsWith(func)) {
+                    // Remove the entire function name at once
+                    workings = workings.substring(0, workings.length() - func.length());
+                    workingsTV.setText(workings); // Update UI
+                    return; // Exit after removing one match
+                }
+            }
+
+            workings=workings.substring(0,workings.length()-1);
+            if (workings.length()==0){
+                workingsTV.setText("");
+                workings = "";
+                result=null;
+                resultsTV.setText("0");
+            }
+
+            nWorkings = workings.replace("Math.PI", "π")
+                    .replace("Math.log(", "ln(")
+                    .replace("Math.log10(", "log(")
+                    .replace("Math.sqrt(", "√(");
+            workingsTV.setText(nWorkings);
         }
     }
 
@@ -279,5 +307,50 @@ public class MainActivity extends AppCompatActivity {
         setWorkings("0");
     }
 
+    public void rootOnClick(View view) {
+        setWorkings("Math.sqrt(");
+    }
+
+    public void percentageOnClick(View view) {
+        if (workings.length() == 0) return; // Do nothing if empty
+
+            ScriptEngine engine = new ScriptEngineManager().getEngineByName("rhino");
+            checkForPowerOf();
+
+            if (formula.isEmpty())return;
+            try {
+                result = (double)engine.eval(formula);
+
+                if(result != null){
+                    result = result / 100.0; // Convert to percentage
+
+                    // Replace the last number with its percentage value
+                    workings = String.valueOf(result);
+
+                    workingsTV.setText(workings);
+
+                    String formatterResult=String.format("%.8g",result).replace("e+0","e+").replace("e-0","e-");
+                    resultsTV.setText("="+formatterResult);
+                }
+            } catch (ScriptException e)
+            {
+                Toast.makeText(this, "Invalid Input", Toast.LENGTH_SHORT).show();
+                resultsTV.setText("="+"Error");
+            }
+
+
+
+    }
+
+
+    public void logOnClick(View view) {
+        setWorkings("Math.log10(");
+    }
+    public void lnOnClick() {
+        setWorkings("Math.log(");
+    }
+    public void paiOnClick(View view) {
+        setWorkings("Math.PI");
+    }
 
 }
