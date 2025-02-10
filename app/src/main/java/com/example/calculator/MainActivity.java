@@ -50,11 +50,12 @@ public class MainActivity extends AppCompatActivity {
         }
 
         workings = workings + givenValue;
-        nWorkings = workings.replace("Math.PI", "π")
-                .replace("Math.log(", "ln(")
-                .replace("Math.log10(", "log(")
-                .replace("Math.sqrt(", "√(");
-        workingsTV.setText(nWorkings);
+        replaceFunction(workings);
+//        nWorkings = workings.replace("Math.PI", "π")
+//                .replace("Math.log(", "ln(")
+//                .replace("Math.log10(", "log(")
+//                .replace("Math.sqrt(", "√(");
+//        workingsTV.setText(nWorkings);
     }
 
 
@@ -205,25 +206,44 @@ public class MainActivity extends AppCompatActivity {
                 if (workings.endsWith(func)) {
                     // Remove the entire function name at once
                     workings = workings.substring(0, workings.length() - func.length());
-                    workingsTV.setText(workings); // Update UI
+                    replaceFunction(workings);
+
+//                    nWorkings = workings.replace("Math.PI", "π")
+//                            .replace("Math.log(", "ln(")
+//                            .replace("Math.log10(", "log(")
+//                            .replace("Math.sqrt(", "√(");
+//                    workingsTV.setText(nWorkings);
+
+                   /// workingsTV.setText(workings); // Update UI
+                    if (workings.isEmpty() | workings.length()==0){
+                        result=null;
+                        resultsTV.setText("0");
+                    }
                     return; // Exit after removing one match
                 }
             }
 
             workings=workings.substring(0,workings.length()-1);
-            if (workings.length()==0){
-                workingsTV.setText("");
-                workings = "";
+            replaceFunction(workings);
+//            nWorkings = workings.replace("Math.PI", "π")
+//                    .replace("Math.log(", "ln(")
+//                    .replace("Math.log10(", "log(")
+//                    .replace("Math.sqrt(", "√(");
+//            workingsTV.setText(nWorkings);
+
+            if (workings.isEmpty() | workings.length()==0){
                 result=null;
                 resultsTV.setText("0");
             }
-
-            nWorkings = workings.replace("Math.PI", "π")
-                    .replace("Math.log(", "ln(")
-                    .replace("Math.log10(", "log(")
-                    .replace("Math.sqrt(", "√(");
-            workingsTV.setText(nWorkings);
         }
+    }
+
+    public void replaceFunction(String workings){
+        nWorkings = workings.replace("Math.PI", "π")
+                .replace("Math.log(", "ln(")
+                .replace("Math.log10(", "log(")
+                .replace("Math.sqrt(", "√(");
+        workingsTV.setText(nWorkings);
     }
 
     public void powerOfOnClick(View view)
